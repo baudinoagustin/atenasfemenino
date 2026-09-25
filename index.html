@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atenas Femenino | Deporte Femenino & Formación Integral</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ada: {
+                            dark: '#05130b',
+                            deep: '#0a2315',
+                            card: '#0f331f',
+                            border: '#1a4a2e',
+                            green: '#00a859',
+                            'green-bright': '#00ff75',
+                            silver: '#e2e8f0',
+                            'silver-dark': '#94a3b8',
+                            pink: '#ff007f',
+                            'pink-glow': '#ff66b2'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 3s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 15px rgba(0, 168, 89, 0.3), 0 0 30px rgba(255, 0, 127, 0.2)' },
+                            '100%': { boxShadow: '0 0 25px rgba(0, 255, 117, 0.5), 0 0 50px rgba(255, 0, 127, 0.4)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #05130b;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(12, 37, 23, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card-hover {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card-hover:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(255, 0, 127, 0.4);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 
+                        0 0 30px 2px rgba(255, 0, 127, 0.25),
+                        0 0 15px 1px rgba(0, 168, 89, 0.3);
+        }
+
+        .glass-nav {
+            background: rgba(5, 19, 11, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .text-glow-pink {
+            text-shadow: 0 0 12px rgba(255, 0, 127, 0.6), 0 0 25px rgba(255, 0, 127, 0.3);
+        }
+
+        .text-glow-green {
+            text-shadow: 0 0 12px rgba(0, 255, 117, 0.6), 0 0 25px rgba(0, 168, 89, 0.3);
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-ada-pink selection:text-white relative">
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="relative z-10 flex flex-col min-h-screen">
+
+        <!-- Navigation -->
+        <header class="sticky top-0 z-50 glass-nav transition-all duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    
+                    <a href="#" class="flex items-center gap-3.5 group">
+                        <div class="relative flex items-center justify-center">
+                            <div class="absolute -inset-1 bg-gradient-to-r from-ada-green via-ada-pink to-ada-green-bright rounded-full blur opacity-40 group-hover:opacity-100 transition duration-500"></div>
+                            <img src="ESCUDO.jfif" alt="Escudo Asociación Deportiva Atenas" class="relative h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='https://placehold.co/120x150/0a2315/ffffff?text=ADA'">
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-display font-extrabold text-2xl tracking-tight text-white leading-none flex items-center gap-1.5">
+                                Bienvenidos <span class="bg-gradient-to-r from-white via-ada-silver to-ada-pink bg-clip-text text-transparent">a Atenas</span>
+                            </span>
+                            <span class="text-[10px] font-bold text-ada-pink tracking-widest uppercase mt-1 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-ada-pink animate-ping"></span>
+                                Deportes Femeninos
+                            </span>
+                        </div>
+                    </a>
+
+                    <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-300">
+                        <a href="#inicio" class="hover:text-ada-pink transition-colors">Inicio</a>
+                        <a href="#metodologia" class="hover:text-ada-pink transition-colors">Disciplina</a>
+                        <a href="#experiencia" class="hover:text-ada-pink transition-colors">Experiencia ADA</a>
+                        <a href="#sponsors" class="hover:text-ada-pink transition-colors">Sponsors & Becas</a>
+                        <a href="#pilares" class="hover:text-ada-pink transition-colors">Nuestros Pilares</a>
+                        <a href="#contacto" class="hover:text-ada-pink transition-colors">Contacto</a>
+                    </nav>
+
+                    <div class="hidden sm:flex items-center gap-4">
+                        <a href="#contacto" class="relative group overflow-hidden rounded-xl p-[1px] font-bold text-xs uppercase tracking-wider">
+                            <span class="absolute inset-0 bg-gradient-to-r from-ada-green via-ada-pink to-ada-green-bright rounded-xl transition-all duration-300 group-hover:opacity-100 opacity-80"></span>
+                            <span class="relative block px-5 py-3 rounded-[11px] bg-ada-dark text-white transition-all duration-300 group-hover:bg-opacity-0">
+                                <span class="flex items-center gap-2">
+                                    <i data-lucide="sparkles" class="w-4 h-4 text-ada-pink"></i>
+                                    Clase Gratis
+                                </span>
+                            </span>
+                        </a>
+                    </div>
+
+                    <button id="mobile-btn" class="md:hidden p-2 rounded-xl text-slate-300 hover:bg-white/10 focus:outline-none">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="mobile-drawer" class="hidden md:hidden glass-card border-b border-white/10 px-6 py-6 space-y-4">
+                <a href="#inicio" class="block text-slate-200 font-semibold text-base hover:text-ada-pink">Inicio</a>
+                <a href="#metodologia" class="block text-slate-200 font-semibold text-base hover:text-ada-pink">Disciplina</a>
+                <a href="#experiencia" class="block text-slate-200 font-semibold text-base hover:text-ada-pink">Experiencia ADA</a>
+                <a href="#sponsors" class="block text-slate-200 font-semibold text-base hover:text-ada-pink">Sponsors & Becas</a>
+                <a href="#pilares" class="block text-slate-200 font-semibold text-base hover:text-ada-pink">Nuestros Pilares</a>
+                <a href="#contacto" class="block text-slate-200 font-semibold text-base hover:text-ada-pink">Contacto</a>
+                <a href="#contacto" class="block text-center py-3 bg-gradient-to-r from-ada-green to-ada-pink text-white font-bold rounded-xl shadow-lg">Solicitar Clase de Prueba</a>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section id="inicio" class="relative pt-12 pb-20 lg:pt-20 lg:pb-32 overflow-hidden flex items-center">
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-ada-green/20 rounded-full blur-[140px] pointer-events-none"></div>
+            <div class="absolute top-1/3 right-10 w-[400px] h-[400px] bg-ada-pink/20 rounded-full blur-[140px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                    
+                    <div class="lg:col-span-7 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass-card border-ada-pink/30 text-white text-xs sm:text-sm font-semibold mb-6 shadow-lg shadow-ada-pink/10 animate-float">
+                            <span class="w-2.5 h-2.5 rounded-full bg-ada-pink shadow-[0_0_10px_#ff007f]"></span>
+                            <span>Formación & Alto Rendimiento en Disciplinas Femeninas</span>
+                        </div>
+
+                        <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-tight text-white mb-6">
+                            Pasión, Valores y <br>
+                            <span class="bg-gradient-to-r from-ada-pink via-ada-pink-glow to-white bg-clip-text text-transparent text-glow-pink">Superación Real.</span>
+                        </h1>
+
+                        <p class="text-slate-300 text-base sm:text-lg lg:text-xl font-normal max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
+                            Un espacio deportivo seguro y motivador diseñado exclusivamente para que niñas y jóvenes desarrollen autoconfianza, trabajo en equipo y técnica atlética avanzada.
+                        </p>
+
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                            <a href="#contacto" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-ada-green via-emerald-600 to-ada-pink hover:opacity-95 text-white font-bold text-base rounded-2xl shadow-[0_0_30px_rgba(255,0,127,0.3)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                                <span>Conocer el Club</span>
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#metodologia" class="w-full sm:w-auto px-8 py-4 glass-card hover:bg-white/10 text-slate-200 font-semibold text-base rounded-2xl transition-all border border-white/20 flex items-center justify-center gap-2">
+                                <i data-lucide="shield-check" class="w-4 h-4 text-ada-pink"></i>
+                                <span>Ver Propuesta</span>
+                            </a>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4 pt-10 mt-10 border-t border-white/10 max-w-lg mx-auto lg:mx-0">
+                            <div class="glass-card p-4 rounded-2xl text-center border-white/10">
+                                <p class="font-display font-black text-2xl lg:text-3xl text-white">100%</p>
+                                <p class="text-[11px] font-semibold text-ada-pink uppercase tracking-wider mt-1">Ambiente Seguro</p>
+                            </div>
+                            <div class="glass-card p-4 rounded-2xl text-center border-white/10">
+                                <p class="font-display font-black text-2xl lg:text-3xl text-white">3</p>
+                                <p class="text-[11px] font-semibold text-ada-silver uppercase tracking-wider mt-1">Disciplinas</p>
+                            </div>
+                            <div class="glass-card p-4 rounded-2xl text-center border-white/10">
+                                <p class="font-display font-black text-2xl lg:text-3xl text-white">100%</p>
+                                <p class="text-[11px] font-semibold text-ada-green-bright uppercase tracking-wider mt-1">Formación Integral</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="lg:col-span-5 flex justify-center relative">
+                        <div class="absolute w-[340px] h-[340px] sm:w-[420px] sm:h-[420px] rounded-full border border-ada-pink/30 animate-pulse-slow pointer-events-none"></div>
+                        <div class="absolute w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] rounded-full border border-ada-green/40 pointer-events-none"></div>
+
+                        <div class="relative max-w-sm w-full glass-card p-8 rounded-3xl border border-white/20 shadow-2xl text-center flex flex-col items-center animate-float">
+
+                            <div class="my-6 relative group">
+                                <div class="absolute -inset-2 bg-gradient-to-r from-ada-pink to-ada-green rounded-2xl blur opacity-30 group-hover:opacity-75 transition duration-500"></div>
+                                <img src="ESCUDO.jfif" alt="Escudo Oficial ADA" class="relative h-64 sm:h-72 w-auto object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]" onerror="this.onerror=null; this.src='https://placehold.co/240x300/0c2b1c/ffffff?text=Escudo+ADA'">
+                            </div>
+
+                            <h3 class="font-display font-extrabold text-2xl text-white tracking-wide">Asociación Deportiva Atenas</h3>
+                            <p class="text-xs font-semibold text-ada-pink uppercase tracking-widest mt-1">Valores • Trabajo en Equipo • Confianza</p>
+                            
+                            <div class="mt-4 pt-4 border-t border-white/10 w-full flex items-center justify-between text-xs text-slate-400">
+                                <span class="flex items-center gap-1.5">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-ada-green-bright"></i> Espacio Protegido
+                                </span>
+                                <span class="flex items-center gap-1.5">
+                                    <i data-lucide="users" class="w-4 h-4 text-ada-pink"></i> Docencia Preparada
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Metodología / Disciplinas -->
+        <section id="metodologia" class="py-24 relative bg-ada-deep/40 border-y border-white/5">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="px-4 py-1.5 rounded-full bg-ada-pink/10 border border-ada-pink/30 text-ada-pink text-xs font-bold uppercase tracking-widest">
+                        Nuestra Propuesta
+                    </span>
+                    <h2 class="font-display text-3xl sm:text-5xl font-black text-white mt-4 mb-4">
+                        Desarrollo Técnico y <span class="bg-gradient-to-r from-ada-pink via-ada-pink-glow to-white bg-clip-text text-transparent">Humano</span>
+                    </h2>
+                    <p class="text-slate-400 text-base sm:text-lg">
+                        Enfoque integral adaptado a cada deporte para potenciar destrezas físicas y fortalezas mentales.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <!-- VOLEY -->
+                    <div class="glass-card rounded-3xl border border-white/10 overflow-hidden glass-card-hover flex flex-col justify-between group">
+                        <div>
+                            <div class="relative bg-gradient-to-b from-ada-card to-ada-dark p-6 flex items-center justify-center border-b border-white/5 h-72 overflow-hidden">
+                                <div class="absolute inset-0 bg-ada-pink/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <img src="VOLEY.jfif" alt="Vóley Femenino ADA" class="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-[0_10px_25px_rgba(0,0,0,0.8)]" onerror="this.onerror=null; this.src='https://placehold.co/300x350/0c2b1c/ffffff?text=Voley+Femenino'">
+                                
+                                <span class="absolute top-4 left-4 bg-ada-dark/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-ada-pink border border-ada-pink/30 uppercase tracking-wider">
+                                    Vóley Femenino
+                                </span>
+                            </div>
+
+                            <div class="p-6">
+                                <h3 class="font-display font-extrabold text-2xl text-white mb-3 flex items-center justify-between">
+                                    Vóley
+                                    <i data-lucide="volleyball" class="w-6 h-6 text-ada-pink"></i>
+                                </h3>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                    Fomenta la comunicación fluida, la rapidez de reflejos y la potencia en el salto mediante dinámicas colectivas de alto impacto.
+                                </p>
+                                
+                                <ul class="space-y-3 text-xs font-semibold text-slate-300">
+                                    <li class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-ada-pink shrink-0"></i>
+                                        <span>Servicio, recepción y armado preciso</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-ada-pink shrink-0"></i>
+                                        <span>Coordinación motora y tiempo de reacción</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-ada-pink shrink-0"></i>
+                                        <span>Pertenencia y fortaleza del espíritu de equipo</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-6 pt-0">
+                            <a href="#contacto" class="block text-center w-full py-3.5 bg-white/5 hover:bg-ada-pink text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-white/10 group-hover:border-ada-pink">
+                                Consultar Plan de Formación
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- BASQUET -->
+                    <div class="glass-card rounded-3xl border border-white/10 overflow-hidden glass-card-hover flex flex-col justify-between group">
+                        <div>
+                            <div class="relative bg-gradient-to-b from-ada-card to-ada-dark p-6 flex items-center justify-center border-b border-white/5 h-72 overflow-hidden">
+                                <div class="absolute inset-0 bg-ada-green/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <img src="BASQUET.jfif" alt="Básquet Femenino ADA" class="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-[0_10px_25px_rgba(0,0,0,0.8)]" onerror="this.onerror=null; this.src='https://placehold.co/300x350/0c2b1c/ffffff?text=Basquet+Femenino'">
+                                
+                                <span class="absolute top-4 left-4 bg-ada-dark/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-ada-green-bright border border-ada-green/30 uppercase tracking-wider">
+                                    Básquet Femenino
+                                </span>
+                            </div>
+
+                            <div class="p-6">
+                                <h3 class="font-display font-extrabold text-2xl text-white mb-3 flex items-center justify-between">
+                                    Básquet
+                                    <i data-lucide="dribble" class="w-6 h-6 text-ada-green-bright"></i>
+                                </h3>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                    Potencia la toma de decisiones rápida, la resistencia aeróbica y el liderazgo táctico inteligente en la cancha.
+                                </p>
+                                
+                                <ul class="space-y-3 text-xs font-semibold text-slate-300">
+                                    <li class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-ada-green-bright shrink-0"></i>
+                                        <span>Dominio fluido del balón y tiro dinámico</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-ada-green-bright shrink-0"></i>
+                                        <span>Agilidad mental y desplazamientos veloces</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-ada-green-bright shrink-0"></i>
+                                        <span>Estrategia colectiva y visión de juego</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-6 pt-0">
+                            <a href="#contacto" class="block text-center w-full py-3.5 bg-white/5 hover:bg-ada-green-bright hover:text-ada-dark text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-white/10">
+                                Consultar Plan de Formación
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- GIMNASIA -->
+                    <div class="glass-card rounded-3xl border border-white/10 overflow-hidden glass-card-hover flex flex-col justify-between group">
+                        <div>
+                            <div class="relative bg-gradient-to-b from-ada-card to-ada-dark p-6 flex items-center justify-center border-b border-white/5 h-72 overflow-hidden">
+                                <div class="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <img src="GIMNASIA.jfif" alt="Gimnasia Rítmica ADA" class="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-[0_10px_25px_rgba(0,0,0,0.8)]" onerror="this.onerror=null; this.src='https://placehold.co/300x350/0c2b1c/ffffff?text=Gimnasia+Ritmica'">
+                                
+                                <span class="absolute top-4 left-4 bg-ada-dark/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-purple-300 border border-purple-400/30 uppercase tracking-wider">
+                                    Gimnasia Rítmica
+                                </span>
+                            </div>
+
+                            <div class="p-6">
+                                <h3 class="font-display font-extrabold text-2xl text-white mb-3 flex items-center justify-between">
+                                    Gimnasia Rítmica
+                                    <i data-lucide="sparkles" class="w-6 h-6 text-ada-pink"></i>
+                                </h3>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                                    Combina la danza, la postura corporal, la flexibilidad y el manejo coordinado de elementos artísticos en secuencias armoniosas.
+                                </p>
+                                
+                                <ul class="space-y-3 text-xs font-semibold text-slate-300">
+                                    <li class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-purple-400 shrink-0"></i>
+                                        <span>Manejo de cinta, aro, maza y pelota</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-purple-400 shrink-0"></i>
+                                        <span>Expresión corporal y educación del ritmo</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i data-lucide="check" class="w-4 h-4 text-purple-400 shrink-0"></i>
+                                        <span>Flexibilidad y técnica estéticamente cuidada</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-6 pt-0">
+                            <a href="#contacto" class="block text-center w-full py-3.5 bg-white/5 hover:bg-ada-pink text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-white/10">
+                                Consultar Plan de Formación
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Experiencia para Padres, Niñas y Adolescentes -->
+        <section id="experiencia" class="py-24 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="px-4 py-1.5 rounded-full bg-ada-green/10 border border-ada-green/30 text-ada-green-bright text-xs font-bold uppercase tracking-widest">
+                        Comunidad Integral
+                    </span>
+                    <h2 class="font-display text-3xl sm:text-5xl font-black text-white mt-4 mb-4">
+                        La Experiencia en <span class="text-glow-pink text-ada-pink"> ATENAS </span>
+                    </h2>
+                    <p class="text-slate-300 text-base sm:text-lg">
+                        Lo que construimos diariamente para familias, deportistas en iniciación y atletas competitivas.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <!-- Para Padres -->
+                    <div class="glass-card p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
+                        <div>
+                            <div class="p-3 bg-ada-pink/20 rounded-2xl text-ada-pink w-fit mb-6">
+                                <i data-lucide="heart-handshake" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="font-display font-extrabold text-2xl text-white mb-4">Para Padres y Madres</h3>
+                            <ul class="space-y-3 text-xs sm:text-sm text-slate-300">
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-ada-green-bright shrink-0 mt-0.5"></i>
+                                    <span>Entorno de entrenamiento seguro, contenido y familiar.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-ada-green-bright shrink-0 mt-0.5"></i>
+                                    <span>Cuerpo técnico capacitado y enfocado en valores.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-ada-green-bright shrink-0 mt-0.5"></i>
+                                    <span>Acompañamiento en el desarrollo de la autoestima.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-ada-green-bright shrink-0 mt-0.5"></i>
+                                    <span>Cultura de compromiso, estudio y hábitos saludables.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Para Niñas -->
+                    <div class="glass-card p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
+                        <div>
+                            <div class="p-3 bg-ada-green/20 rounded-2xl text-ada-green-bright w-fit mb-6">
+                                <i data-lucide="smile" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="font-display font-extrabold text-2xl text-white mb-4">Para Niñas (Semillero)</h3>
+                            <ul class="space-y-3 text-xs sm:text-sm text-slate-300">
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-ada-pink shrink-0 mt-0.5"></i>
+                                    <span>Clases donde el aprendizaje se disfruta jugando.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-ada-pink shrink-0 mt-0.5"></i>
+                                    <span>Creación de grupos unidos y nuevas amistades.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-ada-pink shrink-0 mt-0.5"></i>
+                                    <span>Desarrollo constante de coordinación y movilidad.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-ada-pink shrink-0 mt-0.5"></i>
+                                    <span>Espacio sin presiones para descubrir su vocación.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Para Adolescentes -->
+                    <div class="glass-card p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
+                        <div>
+                            <div class="p-3 bg-purple-500/20 rounded-2xl text-purple-300 w-fit mb-6">
+                                <i data-lucide="trophy" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="font-display font-extrabold text-2xl text-white mb-4">Para Adolescentes</h3>
+                            <ul class="space-y-3 text-xs sm:text-sm text-slate-300">
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-purple-300 shrink-0 mt-0.5"></i>
+                                    <span>Perfeccionamiento técnico y preparación física específica.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-purple-300 shrink-0 mt-0.5"></i>
+                                    <span>Participación en encuentros y torneos regionales.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-purple-300 shrink-0 mt-0.5"></i>
+                                    <span>Identidad de club, liderazgo y superación personal.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-purple-300 shrink-0 mt-0.5"></i>
+                                    <span>Ambiente motivador de pertenencia grupal.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Sección: Sponsor y Padrinazgo Deportivo -->
+        <section id="sponsors" class="py-24 relative bg-ada-deep/50 border-t border-white/10 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="px-4 py-1.5 rounded-full bg-ada-pink/20 border border-ada-pink/40 text-ada-pink text-xs font-black uppercase tracking-widest">
+                        Padrinazgo & Impacto Social
+                    </span>
+                    <h2 class="font-display text-3xl sm:text-5xl font-black text-white mt-4 mb-4">
+                        Sumate como <span class="bg-gradient-to-r from-ada-pink via-ada-pink-glow to-ada-green-bright bg-clip-text text-transparent">Sponsor Oficial</span>
+                    </h2>
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+                        Detrás de cada jugada hay sueños, esfuerzo y ganas de salir adelante. Cada aporte comercial o padrinazgo va directo a fortalecer la vida deportiva de nuestras jugadoras.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                    
+                    <!-- Destino 1: Becas -->
+                    <div class="glass-card p-6 rounded-2xl border-white/10 hover:border-ada-pink/40 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-ada-pink/20 flex items-center justify-center text-ada-pink mb-4">
+                                <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-display font-extrabold text-lg text-white mb-2">Becas Deportivas</h3>
+                            <p class="text-slate-300 text-xs leading-relaxed">
+                                Garantizan que ninguna niña con talento o vocación se quede fuera por razones económicas, cubriendo sus cuotas mensuales.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-ada-pink font-semibold">
+                            Inclusión e Igualdad
+                        </div>
+                    </div>
+
+                    <!-- Destino 2: Indumentaria -->
+                    <div class="glass-card p-6 rounded-2xl border-white/10 hover:border-ada-green-bright/40 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-ada-green/20 flex items-center justify-center text-ada-green-bright mb-4">
+                                <i data-lucide="shirt" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-display font-extrabold text-lg text-white mb-2">Camisetas y Equipación</h3>
+                            <p class="text-slate-300 text-xs leading-relaxed">
+                                Financia conjuntos oficiales de competencia, abrigos e indumentaria que refuerzan la identidad y pertenencia del equipo.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-ada-green-bright font-semibold">
+                            Identidad y Orgullo
+                        </div>
+                    </div>
+
+                    <!-- Destino 3: Materiales -->
+                    <div class="glass-card p-6 rounded-2xl border-white/10 hover:border-purple-400/40 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-300 mb-4">
+                                <i data-lucide="dumbbell" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-display font-extrabold text-lg text-white mb-2">Materiales & Elementos</h3>
+                            <p class="text-slate-300 text-xs leading-relaxed">
+                                Permite adquirir pelotas reglamentarias, aros, cintas de gimnasia, conos y accesorios de entrenamiento de primera calidad.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-purple-300 font-semibold">
+                            Crecimiento Técnico
+                        </div>
+                    </div>
+
+                    <!-- Destino 4: Viajes y Competencias -->
+                    <div class="glass-card p-6 rounded-2xl border-white/10 hover:border-ada-pink/40 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-ada-pink/20 flex items-center justify-center text-ada-pink mb-4">
+                                <i data-lucide="bus" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-display font-extrabold text-lg text-white mb-2">Traslados & Competencias</h3>
+                            <p class="text-slate-300 text-xs leading-relaxed">
+                                Ayuda a financiar viajes a torneos, inscripciones ligueras y logística para que vivan la experiencia de competir.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 text-[11px] text-ada-pink font-semibold">
+                            Experiencia Formativa
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Banner Mensaje Transparente -->
+                <div class="glass-card rounded-3xl p-8 sm:p-10 border border-ada-pink/30 relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-ada-pink/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                        <div class="max-w-2xl text-center md:text-left">
+                            <h3 class="font-display font-extrabold text-2xl sm:text-3xl text-white mb-3">
+                                ¿Querés impulsar el deporte femenino en Atenas?
+                            </h3>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Ofrecemos presencia de marca en camisetas, gimnasio, banners digitales y redes sociales, garantizando que cada peso ingresado vaya transparente e íntegramente a potenciar el futuro de las deportistas.
+                            </p>
+                        </div>
+                        <a href="https://wa.me/5493518177137?text=Hola,%20quisiera%20recibir%20información%20sobre%20cómo%20ser%20Sponsor%20o%20Padrino%20en%20Atenas" target="_blank" class="shrink-0 px-8 py-4 bg-gradient-to-r from-ada-pink to-purple-600 hover:opacity-95 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-[0_0_25px_rgba(255,0,127,0.4)] transition-all flex items-center gap-3">
+                            <i data-lucide="heart" class="w-5 h-5"></i>
+                            <span>Ser Sponsor / Apoyar</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Pilares e Instalaciones -->
+        <section id="pilares" class="py-20 relative bg-ada-deep/30 border-t border-white/5">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <h2 class="font-display text-3xl font-black text-white">¿Por qué Elegir ATENAS?</h2>
+                    <p class="text-slate-400 text-sm mt-2">Fundamentos de nuestra propuesta institucional</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="glass-card p-6 rounded-2xl text-center border-white/10">
+                        <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-ada-pink/20 flex items-center justify-center text-ada-pink">
+                            <i data-lucide="shield" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm mb-1">Ambiente Protegido</h4>
+                        <p class="text-xs text-slate-400">Instalaciones acondicionadas e ingreso controlado.</p>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl text-center border-white/10">
+                        <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-ada-green/20 flex items-center justify-center text-ada-green-bright">
+                            <i data-lucide="award" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm mb-1">Entrenadores Calificados</h4>
+                        <p class="text-xs text-slate-400">Docentes especializados en sus áreas deportivas.</p>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl text-center border-white/10">
+                        <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-300">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm mb-1">Comunidad Activa</h4>
+                        <p class="text-xs text-slate-400">Eventos familiares y convivencia permanente.</p>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl text-center border-white/10">
+                        <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-ada-pink/20 flex items-center justify-center text-ada-pink">
+                            <i data-lucide="trending-up" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm mb-1">Crecimiento Gradual</h4>
+                        <p class="text-xs text-slate-400">Programas evolutivos desde iniciación.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formulario de Inscripción / Clase Gratis -->
+        <section id="contacto" class="py-24 relative bg-ada-deep/60 border-t border-white/10">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                
+                <div class="glass-card rounded-3xl p-8 sm:p-12 border border-white/15 shadow-[0_0_60px_rgba(0,168,89,0.1)]">
+                    
+                    <div class="text-center max-w-xl mx-auto mb-10">
+                        <span class="px-4 py-1.5 rounded-full bg-ada-pink/20 border border-ada-pink/40 text-ada-pink text-xs font-black uppercase tracking-widest">
+                            Cupos Abiertos
+                        </span>
+                        <h2 class="font-display text-3xl sm:text-4xl font-black text-white mt-4 mb-3">
+                            Solicita una Clase de Prueba Gratuita
+                        </h2>
+                        <p class="text-slate-300 text-sm">
+                            Ven a conocer las instalaciones, al cuerpo docente y vive la experiencia ADA.
+                        </p>
+                    </div>
+
+                    <form id="form-inscripcion" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Nombre del Padre / Madre *</label>
+                                <input type="text" id="nombre_tutor" required placeholder="Ej. Mariana Pérez" class="w-full bg-ada-dark/80 border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-ada-pink focus:ring-1 focus:ring-ada-pink transition-all">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Nombre de la Deportista *</label>
+                                <input type="text" id="nombre_deportista" required placeholder="Ej. Camila Sofía" class="w-full bg-ada-dark/80 border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-ada-pink focus:ring-1 focus:ring-ada-pink transition-all">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Correo Electrónico *</label>
+                                <input type="email" id="email" required placeholder="Ej. contacto@ejemplo.com" class="w-full bg-ada-dark/80 border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-ada-pink focus:ring-1 focus:ring-ada-pink transition-all">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">WhatsApp de Contacto *</label>
+                                <input type="tel" id="whatsapp" required placeholder="Ej. 3518100100" class="w-full bg-ada-dark/80 border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-ada-pink focus:ring-1 focus:ring-ada-pink transition-all">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Edad de la Deportista *</label>
+                                <input type="text" id="edad" required placeholder="Ej. 11 años" class="w-full bg-ada-dark/80 border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-ada-pink focus:ring-1 focus:ring-ada-pink transition-all">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Disciplina de Interés Principal *</label>
+                                <select id="disciplina" required class="w-full bg-ada-dark/80 border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:border-ada-pink focus:ring-1 focus:ring-ada-pink transition-all">
+                                    <option value="" disabled selected class="text-slate-500 bg-ada-dark">Selecciona la disciplina</option>
+                                    <option value="Vóley Femenino" class="bg-ada-dark text-white">Vóley Femenino</option>
+                                    <option value="Básquet Femenino" class="bg-ada-dark text-white">Básquet Femenino</option>
+                                    <option value="Gimnasia Rítmica" class="bg-ada-dark text-white">Gimnasia Rítmica</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submit-btn" class="w-full py-4 bg-gradient-to-r from-ada-pink via-purple-600 to-ada-green hover:opacity-95 text-white font-extrabold text-sm uppercase tracking-wider rounded-xl shadow-[0_0_30px_rgba(255,0,127,0.4)] transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="send" class="w-5 h-5"></i>
+                            <span>Enviar Solicitud de Información</span>
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-ada-dark border-t border-white/10 pt-16 pb-12 text-slate-400">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+                    
+                    <div class="md:col-span-2 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <img src="ESCUDO.jfif" alt="Escudo ADA" class="h-12 w-auto object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x120/0c2b1c/ffffff?text=ADA'">
+                            <div>
+                                <h4 class="font-display font-extrabold text-xl text-white">Asociación Deportiva Atenas</h4>
+                                <p class="text-xs text-ada-pink font-semibold">Formación Deportiva Femenina</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400 max-w-sm leading-relaxed">
+                            Impulsamos el desarrollo integral, la disciplina física y la confianza en cada deportista en un entorno moderno y seguro.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h5 class="font-bold text-sm text-white uppercase tracking-wider mb-4">Navegación</h5>
+                        <ul class="space-y-2.5 text-xs">
+                            <li><a href="#inicio" class="hover:text-ada-pink transition-colors">Inicio</a></li>
+                            <li><a href="#metodologia" class="hover:text-ada-pink transition-colors">Disciplina</a></li>
+                            <li><a href="#experiencia" class="hover:text-ada-pink transition-colors">Experiencia ADA</a></li>
+                            <li><a href="#sponsors" class="hover:text-ada-pink transition-colors">Sponsors & Becas</a></li>
+                            <li><a href="#pilares" class="hover:text-ada-pink transition-colors">Nuestros Pilares</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h5 class="font-bold text-sm text-white uppercase tracking-wider mb-4">Atención & Sede</h5>
+                        <ul class="space-y-2.5 text-xs">
+                            <li class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-ada-pink"></i> Alejandro Aguado 775, Barrio Gral Bustos </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="phone" class="w-4 h-4 text-ada-green-bright"></i> 
+                                <a href="https://wa.me/5493518100100" target="_blank" class="hover:text-ada-green-bright transition-colors">351 470-8545</a>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i data-lucide="mail" class="w-4 h-4 text-ada-pink"></i> 
+                                <a href="mailto:contacto@clubada.com.ar" class="hover:text-ada-pink transition-colors">info@atenas.com.ar</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+                    <p>© 2026 Asociación Deportiva Atenas comisión Basquet Femenino. Todos los derechos reservados.</p>
+                    <p class="flex items-center gap-1">
+                        Desarrollado por la comisión deportiva de básquet femenino.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-ada-pink text-white px-6 py-4 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-3 transition-all duration-300 transform translate-y-32 opacity-0">
+        <i id="toast-icon" data-lucide="check-circle" class="w-5 h-5"></i>
+        <span id="toast-text">¡Solicitud recibida! Nos contactaremos a la brevedad.</span>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const mobileBtn = document.getElementById('mobile-btn');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+
+        mobileBtn.addEventListener('click', () => {
+            mobileDrawer.classList.toggle('hidden');
+        });
+
+        /* Configuración de Supabase */
+        const SUPABASE_URL = 'https://qzokrbdsnxldeslcoylr.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_ZD6xuauGQi4Egkro6vwgQA_Xv3nkWK7';
+
+        let supabaseClient = null;
+
+        try {
+            if (typeof supabase !== 'undefined') {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (e) {
+            console.error('Error inicializando el cliente de Supabase:', e);
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+
+            toastText.innerText = message;
+            if (isError) {
+                toast.classList.remove('bg-ada-pink');
+                toast.classList.add('bg-red-600');
+            } else {
+                toast.classList.remove('bg-red-600');
+                toast.classList.add('bg-ada-pink');
+            }
+
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-32', 'opacity-0');
+            }, 5000);
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+
+            if (!supabaseClient) {
+                const msg = 'Error: No se pudo conectar con Supabase. Revisa la consola para más detalles.';
+                console.error(msg);
+                showToast(msg, true);
+                return;
+            }
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Enviando...';
+
+            const payload = {
+                nombre_tutor: document.getElementById('nombre_tutor').value,
+                nombre_deportista: document.getElementById('nombre_deportista').value,
+                email: document.getElementById('email').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                edad: document.getElementById('edad').value,
+                disciplina: document.getElementById('disciplina').value
+            };
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('inscripciones')
+                    .insert([payload]);
+
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Enviar Solicitud de Información';
+
+                if (error) {
+                    console.error('Detalle del error de Supabase:', error);
+                    let detalleError = error.message || 'Error al conectar con la base de datos.';
+                    
+                    if (error.code === '42501') {
+                        detalleError = 'Error RLS: Debes habilitar las políticas de inserción pública en la tabla "inscripciones".';
+                    } else if (error.code === '42P01') {
+                        detalleError = 'Tabla no encontrada: Verifica que la tabla se llame "inscripciones" en Supabase.';
+                    }
+
+                    showToast(detalleError, true);
+                    return;
+                }
+
+                showToast('¡Solicitud recibida! Nos contactaremos a la brevedad.', false);
+                e.target.reset();
+
+            } catch (err) {
+                console.error('Error no esperado:', err);
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Enviar Solicitud de Información';
+                showToast('Error de conexión. Revisa la consola (F12) para más detalles.', true);
+            }
+        }
+
+        /* PARTICLE ENGINE (HTML5 CANVAS) */
+        (function initParticleEngine() {
+            const canvas = document.getElementById('particle-canvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const mouse = { x: width / 2, y: height / 2, active: false };
+
+            window.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+                mouse.active = true;
+            });
+
+            const colors = [
+                { r: 0, g: 168, b: 89 },
+                { r: 0, g: 255, b: 117 },
+                { r: 255, g: 0, b: 127 },
+                { r: 255, g: 102, b: 178 },
+                { r: 226, g: 232, b: 240 }
+            ];
+
+            class Particle {
+                constructor() {
+                    this.reset(true);
+                }
+
+                reset(initial = false) {
+                    this.x = Math.random() * width;
+                    this.y = initial ? Math.random() * height : height + 20;
+                    this.radius = Math.random() * 2.5 + 1;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.alpha = Math.random() * 0.6 + 0.2;
+                    this.vx = (Math.random() - 0.5) * 0.4;
+                    this.vy = -(Math.random() * 0.5 + 0.2);
+                    this.pulseSpeed = Math.random() * 0.02 + 0.005;
+                    this.pulse = Math.random() * Math.PI;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.pulse += this.pulseSpeed;
+
+                    if (mouse.active) {
+                        const dx = mouse.x - this.x;
+                        const dy = mouse.y - this.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            const angle = Math.atan2(dy, dx);
+                            this.x -= Math.cos(angle) * 0.5;
+                            this.y -= Math.sin(angle) * 0.5;
+                        }
+                    }
+
+                    if (this.y < -20 || this.x < -20 || this.x > width + 20) {
+                        this.reset(false);
+                    }
+                }
+
+                draw() {
+                    const currentAlpha = this.alpha + Math.sin(this.pulse) * 0.2;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${Math.max(0, currentAlpha)})`;
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+
+            const particleCount = Math.min(Math.floor(width / 12), 110);
+            const particles = Array.from({ length: particleCount }, () => new Particle());
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                requestAnimationFrame(animate);
+            }
+
+            window.onload = function() {
+                animate();
+            };
+        })();
+    </script>
+</body>
+</html>
